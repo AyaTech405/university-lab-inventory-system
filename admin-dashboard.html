@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow - Admin Dashboard</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/lab.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <header class="sidebar">
+    <a href="#" class="logo"><img src="img/logo4.png" alt="logo" /></a>
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="#labs" data-section="labs"><i class="fas fa-flask"></i> Laboratories</a>
+      <a href="#devices" data-section="devices"><i class="fas fa-desktop"></i> Devices</a>
+      <a href="#users" data-section="users"><i class="fas fa-users"></i> Users</a>
+      <a href="#reports" data-section="reports"><i class="fas fa-file-pdf"></i> Reports</a>
+      <a href="#settings" data-section="settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="content-section active">
+      <h1 class="heading"><span>Admin</span> Dashboard</h1>
+      
+      <!-- Stats Cards -->
+      <div class="cards-container">
+        <div class="card">
+          <h3><i class="fas fa-desktop"></i> Total Devices</h3>
+          <p id="total-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-check-circle"></i> Working</h3>
+          <p id="working-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-tools"></i> Under Repair</h3>
+          <p id="repair-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-exclamation-triangle"></i> Out of Service</h3>
+          <p id="oos-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-flask"></i> Laboratories</h3>
+          <p id="total-labs">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-users"></i> Users</h3>
+          <p id="total-users">0</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-box">
+        <h3 style="color: #fff; margin-bottom: 1rem;">Device Status Overview</h3>
+        <canvas id="devicesChart"></canvas>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <h3 style="color: #fff; margin-bottom: 1rem;">Devices by Type</h3>
+          <canvas id="deviceTypesChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3 style="color: #fff; margin-bottom: 1rem;">Labs Overview</h3>
+          <canvas id="labsChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Labs Section -->
+    <section id="labs-section" class="content-section">
+      <h1 class="heading"><span>Laboratories</span> Management</h1>
+      <div class="dashboard-container">
+        <div class="labs-panel">
+          <div class="panel-header">
+            <h2>Laboratories</h2>
+            <button class="btn btn-primary" id="add-lab-btn">
+              <i class="fas fa-plus"></i> Add Lab
+            </button>
+          </div>
+          <div class="labs-list" id="labs-list">
+            <p class="placeholder">No laboratories added yet</p>
+          </div>
+        </div>
+
+        <div class="devices-panel">
+          <div class="panel-header">
+            <h2 id="devices-title">Select a Laboratory</h2>
+            <button class="btn btn-success" id="add-device-btn" style="display: none">
+              <i class="fas fa-plus"></i> Add Device
+            </button>
+          </div>
+          <div class="devices-list" id="devices-list">
+            <p class="placeholder">Select a laboratory to view devices</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Devices Section -->
+    <section id="devices-section" class="content-section">
+      <h1 class="heading"><span>All</span> Devices</h1>
+      <div class="panel-header" style="margin-bottom: 2rem;">
+        <button class="btn btn-primary" id="add-device-global-btn">
+          <i class="fas fa-plus"></i> Add Device
+        </button>
+        <div class="search-box">
+          <input type="text" id="device-search" placeholder="Search devices..." />
+        </div>
+      </div>
+      <div class="devices-table-container">
+        <table class="devices-table" id="all-devices-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Lab</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-devices-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Users Section -->
+    <section id="users-section" class="content-section">
+      <h1 class="heading"><span>User</span> Management</h1>
+      <div class="panel-header" style="margin-bottom: 2rem;">
+        <button class="btn btn-primary" id="add-user-btn">
+          <i class="fas fa-user-plus"></i> Add User
+        </button>
+      </div>
+      <div class="users-table-container">
+        <table class="users-table" id="users-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Created Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section id="reports-section" class="content-section">
+      <h1 class="heading"><span>Reports</span> Generation</h1>
+      <div class="reports-container">
+        <div class="report-card">
+          <i class="fas fa-file-pdf"></i>
+          <h3>Inventory Report</h3>
+          <p>Generate complete inventory report</p>
+          <button class="btn" onclick="generateReport('inventory')">Generate</button>
+        </div>
+        <div class="report-card">
+          <i class="fas fa-file-excel"></i>
+          <h3>Devices Status Report</h3>
+          <p>Report on all device statuses</p>
+          <button class="btn" onclick="generateReport('status')">Generate</button>
+        </div>
+        <div class="report-card">
+          <i class="fas fa-flask"></i>
+          <h3>Lab Utilization Report</h3>
+          <p>Report on lab usage and capacity</p>
+          <button class="btn" onclick="generateReport('labs')">Generate</button>
+        </div>
+        <div class="report-card">
+          <i class="fas fa-tools"></i>
+          <h3>Maintenance Report</h3>
+          <p>Devices under maintenance</p>
+          <button class="btn" onclick="generateReport('maintenance')">Generate</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section id="settings-section" class="content-section">
+      <h1 class="heading"><span>System</span> Settings</h1>
+      <div class="settings-container">
+        <div class="settings-card">
+          <h3><i class="fas fa-database"></i> Data Management</h3>
+          <div class="settings-item">
+            <p>Export all data</p>
+            <button class="btn" onclick="exportData()">Export</button>
+          </div>
+          <div class="settings-item">
+            <p>Import data</p>
+            <button class="btn" onclick="document.getElementById('import-file').click()">Import</button>
+            <input type="file" id="import-file" style="display:none" onchange="importData(this)" />
+          </div>
+          <div class="settings-item">
+            <p>Reset all data</p>
+            <button class="btn btn-danger" onclick="resetData()">Reset</button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-bell"></i> Notifications</h3>
+          <div class="settings-item">
+            <p>Email notifications</p>
+            <label class="switch">
+              <input type="checkbox" id="email-notif" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="settings-item">
+            <p>Maintenance alerts</p>
+            <label class="switch">
+              <input type="checkbox" id="maintenance-alert" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lab Modal -->
+  <div id="lab-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-lab-modal">&times;</span>
+      <h3 id="lab-modal-title">Add Laboratory</h3>
+      <form id="lab-form">
+        <label for="lab-name">Lab Name/Number:</label>
+        <input type="text" id="lab-name" required />
+        <label for="lab-location">Location:</label>
+        <input type="text" id="lab-location" />
+        <label for="lab-logiciel">Logiciel:</label>
+        <input type="text" id="lab-logiciel" />
+        <label for="lab-capacity">Capacity:</label>
+        <input type="number" id="lab-capacity" />
+        <input type="hidden" id="lab-id" />
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Device Modal -->
+  <div id="device-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-device-modal">&times;</span>
+      <h3 id="device-modal-title">Add Device</h3>
+      <form id="device-form">
+        <label for="device-name">Device Name:</label>
+        <input type="text" id="device-name" required />
+        <label for="device-type">Type:</label>
+        <select id="device-type">
+          <option value="Pc">Pc</option>
+          <option value="Printer">Printer</option>
+          <option value="Cable">Cable</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Keyboard">Keyboard</option>
+          <option value="Data_show">Data_show</option>
+
+
+        </select>
+
+        <label for="device-status">Status:</label>
+        <select id="device-status">
+          <option value="Functional">Functional</option>
+          <option value="Maintenance">Maintenance</option>
+          <option value="Out of Service">Out of Service</option>
+        </select>
+        <label for="device-lab">Laboratory:</label>
+        <select id="device-lab">
+        </select>
+        <input type="hidden" id="device-id" />
+        <button type="submit" class="btn btn-success">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Modal -->
+  <div id="user-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-user-modal">&times;</span>
+      <h3 id="user-modal-title">Add User</h3>
+      <form id="user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required />
+        <label for="password">Password:</label>
+        <input type="password" id="password" required />
+        <label for="user-role">Role:</label>
+        <select id="user-role">
+          <option value="admin">Admin</option>
+          <option value="user">Technician</option>
+        </select>
+        <input type="hidden" id="user-id" />
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="credit">
+      created by <span>Missaoui Aya</span> | all rights reserved
+    </div>
+  </footer>
+
+  <script type="module" src="js/admin-dashboard.js"></script>
+  <script>
+    // Check role and redirect if not admin
+    const role = sessionStorage.getItem("role");
+    if (!role || role !== "admin") {
+      alert("Access denied. Admin only.");
+      window.location.href = "index.html";
+    }
+
+    // Logout button
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      sessionStorage.removeItem("role");
+      window.location.href = "index.html";
+    });
+
+    // Navigation
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.getAttribute('data-section');
+        
+        // Update active nav
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        
+        // Show section
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${section}-section`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

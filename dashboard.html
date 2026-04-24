@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow Dashboard</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="sidebar">
+        <a href="#" class="logo"><img src="img/logo4.png" alt="logo" /></a>
+        <nav class="sidebar-nav">
+          <a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+          <a href="labs.html"><i class="fas fa-flask"></i> Laboratories</a>
+          <a href="reports.html"><i class="fas fa-file-pdf"></i> Reports</a>
+          <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+      </header>
+      
+
+  <section class="dashboard" id="dashboard">
+    <h1 class="heading"><span>Dashboard</span> Overview</h1>
+    <div class="cards-container">
+      <!-- Cards will be dynamically updated by JS -->
+    </div>
+
+    <div class="chart-box">
+      <canvas id="devicesChart"></canvas>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="credit">
+      created by <span>Missaoui Aya</span> | all rights reserved
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+
+  <script>
+    // Check role and redirect if not logged in
+    const role = sessionStorage.getItem("role");
+    if (!role) {
+      alert("Please login first");
+      window.location.href = "index.html";
+    }
+
+    // Logout button
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      sessionStorage.removeItem("role");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

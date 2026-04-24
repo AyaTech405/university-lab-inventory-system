@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockFlow - Technician Dashboard</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/lab.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <header class="sidebar">
+    <a href="#" class="logo"><img src="img/logo4.png" alt="logo" /></a>
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="#labs" data-section="labs"><i class="fas fa-flask"></i> Laboratories</a>
+      <a href="#maintenance" data-section="maintenance"><i class="fas fa-tools"></i> Maintenance</a>
+      <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="content-section active">
+      <h1 class="heading"><span>Technician</span> Dashboard</h1>
+      
+      <!-- Stats Cards -->
+      <div class="cards-container">
+        <div class="card">
+          <h3><i class="fas fa-desktop"></i> Total Devices</h3>
+          <p id="total-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-check-circle"></i> Working</h3>
+          <p id="working-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-tools"></i> Under Repair</h3>
+          <p id="repair-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-exclamation-triangle"></i> Out of Service</h3>
+          <p id="oos-devices">0</p>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-flask"></i> Laboratories</h3>
+          <p id="total-labs">0</p>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-box">
+        <h3 style="color: #fff; margin-bottom: 1rem;">Device Status Overview</h3>
+        <canvas id="devicesChart"></canvas>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <h3 style="color: #fff; margin-bottom: 1rem;">Devices by Status</h3>
+          <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3 style="color: #fff; margin-bottom: 1rem;">Labs Overview</h3>
+          <canvas id="labsChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Labs Section (Read-only for Technicians) -->
+    <section id="labs-section" class="content-section">
+      <h1 class="heading"><span>Laboratories</span> View</h1>
+      <div class="dashboard-container">
+        <div class="labs-panel">
+          <div class="panel-header">
+            <h2>Laboratories</h2>
+          </div>
+          <div class="labs-list" id="labs-list">
+            <p class="placeholder">Loading...</p>
+          </div>
+        </div>
+
+        <div class="devices-panel">
+          <div class="panel-header">
+            <h2 id="devices-title">Select a Laboratory</h2>
+          </div>
+          <div class="devices-list" id="devices-list">
+            <p class="placeholder">Select a laboratory to view devices</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Maintenance Section -->
+    <section id="maintenance-section" class="content-section">
+      <h1 class="heading"><span>Maintenance</span> Management</h1>
+      <div class="panel-header" style="margin-bottom: 2rem;">
+        <p style="color: #ccc; font-size: 1.4rem;">Update device status for maintenance or repair</p>
+      </div>
+      <div class="devices-table-container">
+        <table class="devices-table" id="maintenance-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Lab</th>
+              <th>Current Status</th>
+              <th>Update Status</th>
+            </tr>
+          </thead>
+          <tbody id="maintenance-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Status Update Modal -->
+  <div id="status-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-status-modal">&times;</span>
+      <h3>Update Device Status</h3>
+      <form id="status-form">
+        <label for="new-status">New Status:</label>
+        <select id="new-status">
+          <option value="Functional">Functional</option>
+          <option value="Maintenance">Maintenance</option>
+          <option value="Out of Service">Out of Service</option>
+        </select>
+        <input type="hidden" id="status-device-id" />
+        <input type="hidden" id="status-lab-id" />
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="credit">
+      created by <span>Missaoui Aya</span> | all rights reserved
+    </div>
+  </footer>
+
+  <script type="module" src="js/technician-dashboard.js"></script>
+  <script>
+    // Check role and redirect if not user/technician
+    const role = sessionStorage.getItem("role");
+    if (!role || role !== "user") {
+      alert("Access denied. Technicians only.");
+      window.location.href = "index.html";
+    }
+
+    // Logout button
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      sessionStorage.removeItem("role");
+      window.location.href = "index.html";
+    });
+
+    // Navigation
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.getAttribute('data-section');
+        
+        // Update active nav
+        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        
+        // Show section
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${section}-section`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
